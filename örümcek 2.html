@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Örümcek Adam</title>
+    <style>
+        :root {
+            --bg: #04070d;
+            --panel: rgba(10, 12, 18, 0.92);
+            --line: rgba(255, 255, 255, 0.08);
+            --text: #f3ebdf;
+            --muted: #d9c8b4;
+            --accent: #ffb347;
+            --accent-2: #ff5d5d;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.75;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top, rgba(255, 115, 0, 0.08), transparent 25%),
+                radial-gradient(circle at bottom, rgba(255, 40, 40, 0.12), transparent 30%),
+                linear-gradient(135deg, #04070d 0%, #06080f 35%, #020306 100%);
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.35;
+        }
+
+        body::before {
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 28px 28px;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent 95%);
+        }
+
+        body::after {
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.02) 0 2px, transparent 3px),
+                radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.02) 0 1.5px, transparent 2.5px),
+                radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.015) 0 2px, transparent 3px);
+            animation: spark 10s linear infinite;
+        }
+
+        .container {
+            position: relative;
+            max-width: 980px;
+            margin: 28px auto;
+            padding: 28px;
+            border-radius: 18px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            box-shadow:
+                0 18px 40px rgba(0, 0, 0, 0.55),
+                0 0 24px rgba(255, 100, 100, 0.12),
+                inset 0 0 30px rgba(255, 255, 255, 0.02);
+            overflow: hidden;
+            animation: floatCard 6s ease-in-out infinite;
+        }
+
+        .container::before,
+        .container::after {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .container::before {
+            background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.04) 45%, transparent 55%);
+            transform: translateX(-100%);
+            animation: sweep 8s linear infinite;
+        }
+
+        .container::after {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            opacity: 0.6;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 6px 10px;
+            border: 1px solid rgba(255, 180, 71, 0.35);
+            border-radius: 999px;
+            background: rgba(255, 180, 71, 0.08);
+            color: #ffd89b;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            margin-bottom: 8px;
+            box-shadow: 0 0 10px rgba(255, 180, 71, 0.08);
+        }
+
+        h1 {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin: 0 0 10px;
+            color: #ffe7b5;
+            text-shadow: 0 0 14px rgba(255, 180, 71, 0.25), 0 0 30px rgba(255, 95, 95, 0.15);
+            font-size: clamp(2rem, 6vw, 3rem);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.98rem;
+            margin-bottom: 18px;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+        }
+
+        p {
+            color: #f7efe7;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+        }
+
+        img {
+            display: block;
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            margin: 18px auto;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), 0 0 18px rgba(255, 80, 80, 0.16);
+            animation: pulseGlow 5s ease-in-out infinite;
+        }
+
+        .glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(14px);
+            opacity: 0.3;
+            pointer-events: none;
+            animation: drift 10s ease-in-out infinite alternate;
+        }
+
+        .glow.one { top: 10%; left: -4%; width: 140px; height: 140px; background: rgba(255, 110, 110, 0.16); }
+        .glow.two { bottom: 8%; right: -3%; width: 180px; height: 180px; background: rgba(255, 180, 71, 0.12); animation-delay: -4s; }
+
+        .web {
+            position: absolute;
+            inset: 0;
+            opacity: 0.22;
+            background-image:
+                linear-gradient(to bottom right, transparent 49%, rgba(255,255,255,0.08) 50%, transparent 51%),
+                linear-gradient(to top right, transparent 49%, rgba(255,255,255,0.08) 50%, transparent 51%),
+                linear-gradient(135deg, transparent 0 45%, rgba(255,255,255,0.05) 45% 55%, transparent 55% 100%);
+            background-size: 180px 180px, 180px 180px, 180px 180px;
+            mix-blend-mode: screen;
+            pointer-events: none;
+            animation: webSpin 18s linear infinite;
+        }
+
+        .topbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding: 10px 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            background: rgba(8, 10, 16, 0.85);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .brand {
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #ffe7b5;
+            font-size: 0.95rem;
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 180, 71, 0.28);
+            background: linear-gradient(135deg, rgba(255, 130, 70, 0.12), rgba(255, 70, 70, 0.08));
+            color: #fff4df;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(255, 120, 90, 0.18);
+            background: linear-gradient(135deg, rgba(255, 160, 90, 0.18), rgba(255, 80, 80, 0.14));
+        }
+
+        .panel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+            margin: 18px 0 8px;
+        }
+
+        .panel-card {
+            padding: 14px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.02), 0 8px 18px rgba(0, 0, 0, 0.28);
+        }
+
+        .panel-card h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #ffe7b5;
+            font-size: 1.05rem;
+        }
+
+        .panel-card p {
+            margin: 0;
+            color: #efe4d6;
+            font-size: 0.98rem;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-bottom: 8px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(255, 180, 71, 0.12);
+            border: 1px solid rgba(255, 180, 71, 0.28);
+            color: #ffd9a0;
+            font-size: 0.78rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+
+        @keyframes sweep {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), 0 0 18px rgba(255, 80, 80, 0.16); }
+            50% { box-shadow: 0 14px 38px rgba(0, 0, 0, 0.55), 0 0 28px rgba(255, 130, 130, 0.28); }
+        }
+
+        @keyframes drift {
+            from { transform: translate3d(0, 0, 0); }
+            to { transform: translate3d(14px, -12px, 0); }
+        }
+
+        @keyframes spark {
+            from { transform: translateY(0); }
+            to { transform: translateY(-8px); }
+        }
+
+        @keyframes webSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glow one"></div>
+        <div class="glow two"></div>
+        <div class="web"></div>
+        <nav class="topbar">
+            <span class="brand">Spider Night Menu</span>
+            <div class="menu-buttons">
+                <a class="nav-btn" href="#maske">Herkes Maske Takabilir</a>
+                <a class="nav-btn" href="#ilgincler">Örümcek Adam Hakkında İlginçler</a>
+                <a class="nav-btn" href="#hikaye">Kısa Hikâye</a>
+            </div>
+        </nav>
+        <span class="eyebrow">Gece Ruhu</span>
+        <h1>Örümcek Adam</h1>
+        <p class="subtitle">Karanlık bir gece, örümcek hisleri ve New York sokaklarının gizemli havası.</p>
+
+        <section id="maske" class="panel-grid">
+            <article class="panel-card">
+                <span class="badge">Maske</span>
+                <h2>Herkes maske takabilir</h2>
+                <p>Peter Parker, suçla savaşırken maskeyi sadece bir kostüm gibi değil; gizliliği, sorumluluğu ve ailesini koruma isteğini simgeleyen bir sembol olarak kullanır. Maskeler, güvenlik ve kendini ifade etme için de güçlü bir araçtır.</p>
+            </article>
+            <article class="panel-card">
+                <span class="badge">Sorumluluk</span>
+                <h2>Güç, sorumlulukla gelir</h2>
+                <p>Örümcek Adam’ın temel mesajı budur: güç sahibi olmak, yalnızca zenginlik ya da şöhret değil; çevresindekilere karşı bilinçli ve doğru seçimler yapmayı da gerektirir.</p>
+            </article>
+        </section>
+
+        <section id="ilgincler" class="panel-grid">
+            <article class="panel-card">
+                <span class="badge">İlginç</span>
+                <h2>İlk görünüşü 1962’de oldu</h2>
+                <p>Örümcek Adam, ilk kez Amazing Fantasy #15’te tanıtıldı ve kısa sürede çizgi roman tarihinin en ikonik kahramanlarından biri haline geldi.</p>
+            </article>
+            <article class="panel-card">
+                <span class="badge">Güçler</span>
+                <h2>Örümcek hissi ve ağ atıcıları</h2>
+                <p>Peter Parker’ın güçleri arasında duvarlara tutunma, olağanüstü çeviklik, hız ve “örümcek hissi” yer alır. Kendi ağ atıcılarını yapan da yine odur.</p>
+            </article>
+            <article class="panel-card">
+                <span class="badge">Kültür</span>
+                <h2>Gençlik ve insanlık</h2>
+                <p>Örümcek Adam, sadece süper güçlere sahip biri değil; sorunları, endişeleri ve sorumlulukları olan sıradan bir gençtir. Bu yüzden insanlar ona çok daha kolay bağlanır.</p>
+            </article>
+        </section>
+
+        <p id="hikaye">Örümcek Adam, Marvel evreninin en bilinen süper kahramanlarından biridir. Gerçek adı Peter Parker olan bu genç karakter, radyoaktif bir örümcek tarafından ısırıldıktan sonra olağanüstü güçler kazanır. Bu güçler arasında duvarlarda yürüyebilme, örümcek hisleri, üstün çeviklik ve güç yer alır. Peter Parker, önce kendi çıkarları için bu yetenekleri kullanmayı düşünür, ancak amcası Ben Parker'ın trajik ölümü onu değiştirir.</p>
+        <p>"Büyük güç, büyük sorumlulukla birlikte gelir" sözü, Örümcek Adam'ın hikayesinin temelini oluşturur. Amcası Ben'in ölümü, Peter'a yaptığı seçimlerin etkisini öğretir ve onu New York sokaklarında suçla savaşan, masumları koruyan bir kahramana dönüştürür. Bu hikaye, güç sahibi insanların eylemlerinin sonuçlarıyla yüzleşmesi gerektiği mesajını güçlü bir şekilde verir.</p>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdMsD79duM9kVLbpCGMSLGQArlWpPG3JpXpVtQNaFXfg&s=10" alt="Örümcek Adam fotoğrafı">
+        <p>Peter Parker aynı zamanda akıllı, zeki ve duygusal bir gençtir. Fotoğrafçılık ve bilimle ilgilenir, lise öğrencisiyken bile laboratuvarda çalışır. İkili kimliği onu duygusal açıdan zorlasa da, öğrenmeye ve sevdiklerini korumaya her zaman devam eder. Mary Jane Watson ve Gwen Stacy gibi karakterler, Peter'ın hayatında önemli rol oynar ve onun kahramanlık yolculuğuna insani bir boyut katar.</p>
+        <p>Örümcek Adam, öfke, suç ve adaletsizlikle mücadele ederken aynı zamanda sıradan insanların da umut sembolü haline gelir. Hem yetenekleri hem de kararlılığı sayesinde, Marvel evreninde diğer kahramanlarla birlikte sayısız macerada yer alır. Onun hikayesi, tek bir kişinin bile dünyayı değiştirebileceğini gösteren klasik bir süper kahraman anlatısıdır.</p>
+        <p>Sonuç olarak, Örümcek Adam sadece güçlü bir kahraman değil, aynı zamanda zor seçimler yapan bir insanın hikayesidir. Peter Parker'ın yaşadığı kayıplar, karşılaştığı zorluklar ve aldığı sorumluluklar, onu yalnızca örümcek güçlerine sahip bir karakter değil, aynı zamanda empati kurabileceğimiz bir figür haline getirir.</p>
+    </div>
+</body>
+</html>
